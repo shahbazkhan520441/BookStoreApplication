@@ -48,4 +48,6 @@ public interface UserService {
 
 
     ResponseEntity<ResponseStructure<AuthResponse>> login(UserAuthRequest authRequest);
+
+    ResponseEntity<ResponseStructure<AuthResponse>> refreshLogin(String refreshToken);
 }

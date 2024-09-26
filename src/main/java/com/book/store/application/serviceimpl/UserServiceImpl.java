@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import com.book.store.application.exception.*;
 import com.book.store.application.jwt.AccessToken;
 import com.book.store.application.jwt.JwtService;
 import com.book.store.application.jwt.RefreshToken;
@@ -37,11 +38,6 @@ import com.book.store.application.entity.Customer;
 import com.book.store.application.entity.Seller;
 import com.book.store.application.entity.User;
 import com.book.store.application.enums.UserRole;
-import com.book.store.application.exception.IllegalOperationException;
-import com.book.store.application.exception.InvalidOtpException;
-import com.book.store.application.exception.OtpExpiredException;
-import com.book.store.application.exception.UserAlreadyExistException;
-import com.book.store.application.exception.UserNotExistException;
 import com.book.store.application.mapper.UserMapper;
 import com.book.store.application.repository.UserRepository;
 import com.book.store.application.requestdto.MainUserRequest;
@@ -442,5 +438,36 @@ public ResponseEntity<ResponseStructure<UserResponse>> verifyUserOtp(OtpVerifica
 	                .setMessage("Users are Founded")
 	                .setData(userResponseList));
 	    }
+
+//		--------------------------------------------------------------------------------------------------------------------------------------------
+
+	@Override
+	public ResponseEntity<ResponseStructure<AuthResponse>> refreshLogin(String refreshToken) {
+		Date expiryDate = jwtService.extractExpirationDate(refreshToken);
+		if (expiryDate.getTime() < new Date().getTime()) {
+			throw new TokenExpiredException("Refresh token was expired, Please make a new SignIn request");
+		} else {
+			String username = jwtService.extractUserName(refreshToken);
+//            UserRole userRole = jwtService.extractUserRole(refreshToken);
+			User user = userRepository.findByUsername(username).get();
+
+			HttpHeaders httpHeaders = new HttpHeaders();
+			grantAccessToken(httpHeaders, user);
+
+			return ResponseEntity.status(HttpStatus.OK)
+					.headers(httpHeaders)
+					.body(new ResponseStructure<AuthResponse>()
+							.setStatus(HttpStatus.OK.value())
+							.setMessage("Access Toke renewed")
+							.setData(AuthResponse.builder()
+									.userId(user.getUserid())
+									.username(user.getUsername())
+									.userRole(user.getUserRole())
+									.accessExpiration(accessExpirySeconds)
+									.refreshExpiration((expiryDate.getTime() - new Date().getTime()) / 1000)
+									.build()));
+		}
+	}
+
 
 }

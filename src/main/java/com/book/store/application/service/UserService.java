@@ -6,6 +6,7 @@ import com.book.store.application.entity.User;
 
 import com.book.store.application.requestdto.UserAuthRequest;
 import com.book.store.application.responsedto.AuthResponse;
+import com.book.store.application.responsedto.LogoutResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
@@ -50,4 +51,6 @@ public interface UserService {
     ResponseEntity<ResponseStructure<AuthResponse>> login(UserAuthRequest authRequest);
 
     ResponseEntity<ResponseStructure<AuthResponse>> refreshLogin(String refreshToken);
+
+	ResponseEntity<LogoutResponse> logout(String refreshToken, String accessToken);
 }

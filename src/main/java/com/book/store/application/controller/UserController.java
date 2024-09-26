@@ -8,6 +8,7 @@ import com.book.store.application.repository.UserRepository;
 
 import com.book.store.application.requestdto.UserAuthRequest;
 import com.book.store.application.responsedto.AuthResponse;
+import com.book.store.application.responsedto.LogoutResponse;
 import org.hibernate.internal.build.AllowSysOut;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -126,7 +127,12 @@ public class UserController {
             @CookieValue(value = "rt", required = false) String refreshToken) {
         return userService.refreshLogin(refreshToken);
     }
-
+//----------------------------------------------------------------------------------------------------------------------------------
+@PostMapping("/logout")
+public ResponseEntity<LogoutResponse> logout(@CookieValue(value = "rt", required = false) String refreshToken,
+                                             @CookieValue(value = "at", required = false) String accessToken) {
+    return userService.logout(refreshToken, accessToken);
+}
 
 
     

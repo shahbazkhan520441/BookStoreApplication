@@ -6,6 +6,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import com.book.store.application.exception.*;
@@ -17,6 +18,7 @@ import com.book.store.application.repository.RefreshTokenRepository;
 import com.book.store.application.requestdto.UserAuthRequest;
 import com.book.store.application.responsedto.AuthResponse;
 
+import com.book.store.application.responsedto.LogoutResponse;
 import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.http.HttpHeaders;
@@ -470,6 +472,32 @@ public class UserServiceImpl implements UserService {
                                     .build()));
         }
     }
+
+//    ------------------------------------------------------------------------------------------------------------------------------------
+@Override
+public ResponseEntity<LogoutResponse> logout(String refreshToken, String accessToken) {
+    Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByRefreshToken(refreshToken);
+    Optional<AccessToken> optionalAccessToken = accessTokenRepository.findByAccessToken(accessToken);
+    RefreshToken existRefreshToken = optionalRefreshToken.get();
+    AccessToken existAccessToken = optionalAccessToken.get();
+
+    existRefreshToken.setBlocked(true);
+    existAccessToken.setBlocked(true);
+    refreshTokenRepository.save(existRefreshToken);
+    accessTokenRepository.save(existAccessToken);
+
+    HttpHeaders httpHeaders = new HttpHeaders();
+    httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("rt", null, 0));
+    httpHeaders.add(HttpHeaders.SET_COOKIE, generateCookie("at", null, 0));
+
+    return ResponseEntity.status(HttpStatus.OK)
+            .headers(httpHeaders)
+            .body(LogoutResponse.builder()
+                    .status(HttpStatus.OK.value())
+                    .message("User logout done")
+                    .build());
+}
+
 
 
 }

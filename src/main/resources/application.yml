@@ -8,7 +8,7 @@ spring:
 
     #  DataSource configuration
   datasource:
-    url: ${DB_URL}
+    url: jdbc:mysql://localhost:3306/book_store_application?createDatabaseIfNotExist=true
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   #      driver-class-name: com.mysql.cj.jdbc.Driver
@@ -36,20 +36,16 @@ spring:
             required: true
 
 
-## Application Custom configuration    (3600000 = 1hour and 1296000000 = 15days) in milli
-## (3600 = 1hour and 1296000 = 15days) in seconds
-#application:
-#  jwt:
-#    secrete: ${JWT_SECRET}
-#    access_expiry_seconds: 3600
-#    refresh_expiry_seconds: 1296000
-#  cookie:
-#    domain: localhost
-#    same_site: Lax
-#    secure: false
-#  client:
-#    api_key: ${API_KEY}
-#    username: ${USERNAME}
-#    client_id: ${CLIENT_ID}
+# Application Custom configuration    (3600000 = 1hour and 1296000000 = 15days) in milli
+# (3600 = 1hour and 1296000 = 15days) in seconds
+application:
+  jwt:
+    secrete: ${JWT_SECRET}
+    access_expiry_seconds: 3600
+    refresh_expiry_seconds: 1296000
+  cookie:
+    domain: localhost
+    same_site: Lax
+    secure: false
 
 #debug: true

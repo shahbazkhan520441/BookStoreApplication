@@ -2,6 +2,11 @@ package com.book.store.application.service;
 
 import java.util.List;
 
+import com.book.store.application.entity.User;
+
+import com.book.store.application.requestdto.UserAuthRequest;
+import com.book.store.application.responsedto.AuthResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
 import com.book.store.application.enums.UserRole;
@@ -15,6 +20,14 @@ import jakarta.validation.Valid;
 
 
 public interface UserService {
+
+	String usernameGenerate(String email);
+
+	public void grantRefreshToken(HttpHeaders httpHeaders, User user);
+
+	public void grantAccessToken(HttpHeaders httpHeaders, User user);
+
+	void mailSend(String email, String subject, String text);
 
 	 ResponseEntity<ResponseStructure<UserResponse>> saveUser(MainUserRequest userRequest, UserRole userRole);
 	 
@@ -34,4 +47,5 @@ public interface UserService {
 	ResponseEntity<ResponseStructure<List<UserResponse>>> findUsers();
 
 
+    ResponseEntity<ResponseStructure<AuthResponse>> login(UserAuthRequest authRequest);
 }

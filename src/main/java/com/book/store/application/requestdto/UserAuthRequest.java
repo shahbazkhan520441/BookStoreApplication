@@ -4,11 +4,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
-import lombok.ToString;
+import lombok.Setter;
 
 @Getter
-@ToString
-public class AuthRequest {
+@Setter
+public class UserAuthRequest {
 
     @NotBlank(message = "Username can not be blank")
     @NotNull (message = "Username can not be null")

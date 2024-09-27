@@ -9,11 +9,8 @@ import com.book.store.application.repository.UserRepository;
 import com.book.store.application.requestdto.UserAuthRequest;
 import com.book.store.application.responsedto.AuthResponse;
 import com.book.store.application.responsedto.LogoutResponse;
-import org.hibernate.internal.build.AllowSysOut;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.service.annotation.PutExchange;
 
 import com.book.store.application.enums.UserRole;
 import com.book.store.application.requestdto.MainUserRequest;

@@ -17,8 +17,6 @@ import com.book.store.application.requestdto.UserRequest;
 import com.book.store.application.responsedto.UserResponse;
 import com.book.store.application.util.ResponseStructure;
 
-import jakarta.validation.Valid;
-
 
 public interface UserService {
 

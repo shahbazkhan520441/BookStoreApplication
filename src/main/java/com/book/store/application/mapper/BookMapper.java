@@ -12,14 +12,11 @@ import java.io.IOException;
 public class BookMapper {
 
     // Mapping BookRequest to Book entity for creating/updating a book
-    public Book mapBookRequestToBook(BookRequest bookRequest, Book book, MultipartFile bookLogo) throws IOException {
-        byte[] logoBytes = bookLogo != null ? bookLogo.getBytes() : null;  // Convert logo file to byte array
+    public Book mapBookRequestToBook(BookRequest bookRequest, Book book) throws IOException {
         book.setBookName(bookRequest.getBookName());
         book.setBookAuthor(bookRequest.getBookAuthor());
         book.setBookDescription(bookRequest.getBookDescription());
-        book.setBookLogo(logoBytes);  // Handle the logo bytes
         book.setBookPrice(bookRequest.getBookPrice());
-        book.setBookQuantity(bookRequest.getBookQuantity());
         return book;
     }
 
@@ -30,7 +27,6 @@ public class BookMapper {
                 .bookName(book.getBookName())
                 .bookAuthor(book.getBookAuthor())
                 .bookDescription(book.getBookDescription())
-                .bookLogo(book.getBookLogo())  // Return the logo bytes
                 .bookPrice(book.getBookPrice())
                 .bookQuantity(book.getBookQuantity())
                 .build();

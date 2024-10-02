@@ -77,6 +77,7 @@ public class SecurityConfig {
                         "/api/v1/products/**",
                         "/login/**",
                          "/api/v1/test/**",
+                        "/api/v1/book/**",
                         "/"))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

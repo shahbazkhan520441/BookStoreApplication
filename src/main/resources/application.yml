@@ -49,3 +49,11 @@ application:
     secure: false
 
 #debug: true
+
+#Cloudinary configuration for image upload
+cloudinary:
+  cloud:
+    name: ${CLOUDINARY_CLOUD_NAME}
+  api:
+    key: ${CLOUDINARY_API_KEY}
+    secret: ${CLOUDINARY_API_SECRET}

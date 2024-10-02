@@ -1,7 +1,10 @@
 package com.book.store.application.entity;
 
+import com.book.store.application.enums.AvailabilityStatus;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,10 +21,15 @@ public class Book {
     private String bookAuthor;
     private String bookDescription;
 
-    @Lob
-    private byte[] bookLogo;
+
 
     private Double bookPrice;
     private Integer bookQuantity;
+
+    @Enumerated(EnumType.STRING)
+    private AvailabilityStatus availabilityStatus;
+
+    @OneToMany(mappedBy = "book")
+    private List<Image> images;
 
 }

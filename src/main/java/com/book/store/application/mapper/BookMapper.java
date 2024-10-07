@@ -3,8 +3,8 @@ package com.book.store.application.mapper;
 import com.book.store.application.entity.Book;
 import com.book.store.application.requestdto.BookRequest;
 import com.book.store.application.responsedto.BookResponse;
+import com.book.store.application.responsedto.BookResponseCart;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -28,6 +28,18 @@ public class BookMapper {
                 .bookAuthor(book.getBookAuthor())
                 .bookDescription(book.getBookDescription())
                 .bookPrice(book.getBookPrice())
+                .bookQuantity(book.getBookQuantity())
+                .build();
+    }
+
+    public BookResponseCart mapBookToBookResponseCart(Book book) {
+        return BookResponseCart.builder()
+                .bookid(book.getBookid())
+                .bookName(book.getBookName())
+                .bookAuthor(book.getBookAuthor())
+                .bookDescription(book.getBookDescription())
+                .bookPrice(book.getBookPrice())
+                .availabilityStatus(book.getAvailabilityStatus())
                 .bookQuantity(book.getBookQuantity())
                 .build();
     }

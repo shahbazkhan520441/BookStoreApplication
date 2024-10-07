@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -35,5 +36,16 @@ public class BookController {
         return bookService.updateBook(bookId,quantity,bookImage,bookRequest);
     }
 
+    @GetMapping("/books/{bookId}")
+    public ResponseEntity<ResponseStructure<BookResponse>> findBook(@PathVariable Long bookId){
 
+        return  bookService.findBook(bookId);
+    }
+
+    @GetMapping("/books")
+    public ResponseEntity<ResponseStructure<List<BookResponse>>> findBooks(){
+
+    return bookService.findBooks();
+
+    }
 }

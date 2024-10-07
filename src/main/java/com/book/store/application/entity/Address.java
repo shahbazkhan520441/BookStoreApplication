@@ -1,10 +1,7 @@
 package com.book.store.application.entity;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,7 +24,10 @@ public class Address {
     private String state;
     private String country;
     private int pincode;
-   
+
+    @ManyToOne
+    private Customer customer;
+
    
    
 }

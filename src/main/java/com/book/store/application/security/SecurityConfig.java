@@ -78,7 +78,8 @@ public class SecurityConfig {
                         "/login/**",
                          "/api/v1/test/**",
                         "/api/v1/book/**",
-                        "/"))
+                        "/",
+                        "/customers/{customerId}"))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new LoginFilter(), UsernamePasswordAuthenticationFilter.class)
@@ -88,7 +89,9 @@ public class SecurityConfig {
 
     @Bean
     AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+
         return authenticationConfiguration.getAuthenticationManager();
     }
+
 
 }

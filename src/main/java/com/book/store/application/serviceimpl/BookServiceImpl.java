@@ -153,5 +153,38 @@ public class BookServiceImpl implements BookService {
                 .setData(bookMapper.mapBookToBookResponse(existingBook)));
     }
 
+    @Override
+    public ResponseEntity<ResponseStructure<BookResponse>> findBook(Long bookId) {
+       Book book= bookRepository.findById(bookId).orElseThrow(()-> new IllegalArgumentException("Book not found with id: " + bookId));
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<BookResponse>()
+                .setStatus(HttpStatus.OK.value())
+                .setMessage("Book fetched successfully.")
+                .setData(bookMapper.mapBookToBookResponse(book))
+        );
+    }
+
+    @Override
+    public ResponseEntity<ResponseStructure<List<BookResponse>>> findBooks() {
+        // Fetch all books from the repository
+        List<Book> books = bookRepository.findAll();
+
+        // Map the list of Book entities to a list of BookResponse DTOs
+        List<BookResponse> bookResponses = books.stream()
+                .map(bookMapper::mapBookToBookResponse)
+                .toList(); // Use `collect(Collectors.toList())` for Java 8
+
+        // Prepare the response using your preferred way
+        ResponseStructure<List<BookResponse>> responseStructure = new ResponseStructure<>();
+        responseStructure
+                .setStatus(HttpStatus.OK.value())
+                .setMessage("Books fetched successfully.")
+                .setData(bookResponses);
+
+        // Return the response entity with the response structure and HTTP status
+        return ResponseEntity.status(HttpStatus.OK).body(responseStructure);
+    }
+
+
 
 }

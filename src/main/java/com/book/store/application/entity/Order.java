@@ -3,6 +3,8 @@ package com.book.store.application.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "`order`")
 @Getter
@@ -18,7 +20,12 @@ public class Order {
     private double totalPrice;
     private double discount;
     private double discountPrice;
+
     private double totalPayableAmount;
+    private LocalDate orderDate;
+
+    @ManyToOne
+    private Customer customer;
     @ManyToOne
     private Book book;
     @ManyToOne

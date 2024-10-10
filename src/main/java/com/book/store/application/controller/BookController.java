@@ -26,8 +26,6 @@ public class BookController {
                                                                     @RequestPart("bookImage") MultipartFile bookImage,
                                                                      @RequestPart("bookrequest")
                                                                         BookRequest bookRequest) throws IOException {
-        System.out.println(bookRequest.getBookAuthor()+" "+" ========================="+bookRequest.getBookPrice());
-        System.out.println("in conroller ----------------------------------------");
         return bookService.addBook(quantity,bookImage,bookRequest);
     }
 

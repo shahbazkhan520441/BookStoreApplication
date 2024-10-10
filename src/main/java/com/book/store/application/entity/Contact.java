@@ -1,14 +1,9 @@
 package com.book.store.application.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.book.store.application.enums.Priority;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Getter
@@ -16,10 +11,18 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 public class Contact {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long contactId;
-    private Long contactNumber=0L;
-   
+    private Long contactNumber;
+    @Enumerated(EnumType.STRING)
+    private Priority priority;
+
+    @ManyToOne
+    @JsonIgnore
+    private Address address;
+
+
 }

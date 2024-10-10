@@ -12,7 +12,8 @@ public class BookResponse {
     private String bookName;
     private String bookAuthor;
     private String bookDescription;
-    private byte[] bookLogo;
+    private String bookImage;
     private Double bookPrice;
+    private Double discount;
     private Integer bookQuantity;
 }

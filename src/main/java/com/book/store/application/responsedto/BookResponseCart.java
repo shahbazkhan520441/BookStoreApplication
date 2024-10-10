@@ -18,6 +18,7 @@ public class BookResponseCart {
     private String bookDescription;
     private String bookImage;
     private Double bookPrice;
+    private Double discount;
     @Enumerated(EnumType.STRING)
     private AvailabilityStatus availabilityStatus;
     private Integer bookQuantity;

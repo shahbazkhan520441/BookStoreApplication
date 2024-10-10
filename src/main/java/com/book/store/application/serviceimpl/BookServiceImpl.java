@@ -1,13 +1,18 @@
 package com.book.store.application.serviceimpl;
 
 import com.book.store.application.entity.Book;
+import com.book.store.application.entity.Cart;
+import com.book.store.application.entity.Discount;
 import com.book.store.application.entity.Image;
 import com.book.store.application.enums.AvailabilityStatus;
+import com.book.store.application.enums.DiscountType;
 import com.book.store.application.enums.ImageType;
 import com.book.store.application.exception.FileSizeExceededException;
 import com.book.store.application.exception.InvalidFileFormatException;
 import com.book.store.application.mapper.BookMapper;
 import com.book.store.application.repository.BookRepository;
+import com.book.store.application.repository.CartRepository;
+import com.book.store.application.repository.DiscountRepository;
 import com.book.store.application.repository.ImageRepository;
 import com.book.store.application.requestdto.BookRequest;
 import com.book.store.application.responsedto.BookResponse;
@@ -20,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -29,14 +35,19 @@ public class BookServiceImpl implements BookService {
     private final BookMapper bookMapper;
     private final ImageService imageService;
     private final ImageRepository imageRepository;
+    private final DiscountRepository discountRepository;
+    private final CartRepository cartRepository;
 
-    public BookServiceImpl(BookRepository bookRepository, BookMapper bookMapper, ImageService imageService, ImageRepository imageRepository) {
+    public BookServiceImpl(BookRepository bookRepository, BookMapper bookMapper, ImageService imageService, ImageRepository imageRepository, DiscountRepository discountRepository, CartRepository cartRepository) {
         this.bookRepository = bookRepository;
         this.bookMapper = bookMapper;
         this.imageService = imageService;
         this.imageRepository = imageRepository;
+        this.discountRepository = discountRepository;
+        this.cartRepository = cartRepository;
     }
 
+    //    -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     @Override
     public ResponseEntity<ResponseStructure<BookResponse>> addBook(int quantity, MultipartFile bookImage, BookRequest bookRequest) throws IOException {
         Book book = bookMapper.mapBookRequestToBook(bookRequest, new Book());
@@ -73,11 +84,13 @@ public class BookServiceImpl implements BookService {
             imageRepository.save(image);
         }
 
+        //  save Discount object
+        saveDiscount(bookRequest, book);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<BookResponse>()
                 .setStatus(HttpStatus.CREATED.value())
-                .setMessage( " book added to database sucessfully")
+                .setMessage(" book added to database sucessfully")
                 .setData(bookMapper.mapBookToBookResponse(book)));
-
 
 
     }
@@ -91,16 +104,48 @@ public class BookServiceImpl implements BookService {
             default -> throw new InvalidFileFormatException("Unsupported image format.");
         };
     }
-//---------------------------------------------------------------------------------------------------------------------------------
+
+    //---------------------------------------------------------------------------------------------------
+//    save thee Discount object
+    private void saveDiscount(BookRequest bookRequest, Book book) {
+        Discount discount = new Discount();
+        discount.setBook(book);
+
+        if (bookRequest.getDiscountType() != null) {
+            discount.setDiscountType(bookRequest.getDiscountType());
+        } else {
+            discount.setDiscountType(DiscountType.FLAT);
+        }
+        if (bookRequest.getDiscount() != 0.0) {
+            discount.setDiscountValue(bookRequest.getDiscount());
+        } else {
+            discount.setDiscountValue(0.0);
+        }
+        discount.setActive(true);
+        discountRepository.save(discount);
+    }
+
+    //    Update discount
+    private void updateDiscount(BookRequest bookRequest, Book book) {
+        List<Discount> discounts = discountRepository.findByBookAndIsActiveTrue(book);
+        if (!discounts.isEmpty()) {
+            Discount discount = discounts.getFirst();
+            discount.setDiscountValue(bookRequest.getDiscount());
+            discount.setDiscountType(bookRequest.getDiscountType());
+            discountRepository.save(discount);
+        }
+    }
+
+    //    -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
     @Override
     public ResponseEntity<ResponseStructure<BookResponse>> updateBook(Long bookId, int quantity, MultipartFile bookImage, BookRequest bookRequest) throws IOException {
-        // Fetch the book from the repository
-        Book existingBook = bookRepository.findById(bookId).orElseThrow(() -> new IllegalArgumentException("Book not found with id: " + bookId));
 
-        // Map updated fields from BookRequest to the existing book
-        existingBook = bookMapper.mapBookRequestToBook(bookRequest, existingBook);
-        existingBook.setBookQuantity(quantity);
-        existingBook.setAvailabilityStatus(quantity > 0 ? AvailabilityStatus.YES : AvailabilityStatus.NO);
+        // Fetch the existing book from the repository
+        Book book = bookRepository
+                .findById(bookId)
+                .orElseThrow(() -> new IllegalArgumentException("Book Id : " + bookId + ", does not exist"));
 
         // Handle image update if provided
         if (bookImage != null && !bookImage.isEmpty()) {
@@ -113,22 +158,22 @@ public class BookServiceImpl implements BookService {
                 throw new InvalidFileFormatException("Only JPEG, PNG, and JPG formats are supported.");
             }
 
-            // Validate file size
+            // Validate file size (max 2MB)
             long maxSizeInBytes = 2 * 1024 * 1024; // 2 MB
             if (bookImage.getSize() > maxSizeInBytes) {
                 throw new FileSizeExceededException("File size must be less than 2 MB.");
             }
 
-            // Upload new image and update the book's image
+            // Upload new image
             String imagePath = imageService.uploadImage(bookImage);
             ImageType imageType = determineImageType(contentType);
 
-            // Get the list of images associated with the book
-            List<Image> existingImages = imageRepository.findByBook(existingBook);
+            // Get the list of existing images associated with the book
+            List<Image> existingImages = imageRepository.findByBook(book);
 
             if (existingImages != null && !existingImages.isEmpty()) {
-                // Assuming you want to update the first image in the list (or loop through and update all)
-                Image existingImage = existingImages.get(0); // Example: updating the first image
+                // Update the first image in the list
+                Image existingImage = existingImages.get(0);
                 existingImage.setImage(imagePath);
                 existingImage.setImageType(imageType);
                 imageRepository.save(existingImage);
@@ -137,25 +182,61 @@ public class BookServiceImpl implements BookService {
                 Image newImage = Image.builder()
                         .image(imagePath)
                         .imageType(imageType)
-                        .book(existingBook)
+                        .book(book)
                         .build();
                 imageRepository.save(newImage);
             }
+
+        } else {
+
+            List<Image> images = imageRepository.findByBook(book);
+            if (!images.isEmpty()) {
+                // If there are existing images, set them to the book
+                book.setImages(images);
+            }
+
+
         }
 
-        // Save updated book entity
-        bookRepository.save(existingBook);
+        // Update book entity with new values
+        book = bookMapper.mapBookRequestToBook(bookRequest, book);
+        book.setBookQuantity(quantity);
+        book.setAvailabilityStatus(quantity > 0 ? AvailabilityStatus.YES : AvailabilityStatus.NO);
 
-        // Prepare the response
+        // Save the updated book
+        book = bookRepository.save(book);
+
+        // Update discounts if applicable
+        updateDiscount(bookRequest, book);
+
+        // Update all carts that contain this book
+        updateCart(book);
+
+        // Return the updated book in the response
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<BookResponse>()
                 .setStatus(HttpStatus.OK.value())
                 .setMessage("Book updated successfully.")
-                .setData(bookMapper.mapBookToBookResponse(existingBook)));
+                .setData(bookMapper.mapBookToBookResponse(book)));
     }
+
+    // Method to update carts that contain the updated book
+    private void updateCart(Book book) {
+        // Fetch all carts that contain the book
+        List<Cart> carts = cartRepository.findByBook(book);
+
+        // Update each cart with the updated book
+        carts.forEach(cart -> {
+            cart.setBook(book); // Update the book reference in the cart
+            cartRepository.save(cart); // Save the updated cart entry
+        });
+    }
+
+
+//    ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     @Override
     public ResponseEntity<ResponseStructure<BookResponse>> findBook(Long bookId) {
-       Book book= bookRepository.findById(bookId).orElseThrow(()-> new IllegalArgumentException("Book not found with id: " + bookId));
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new IllegalArgumentException("Book not found with id: " + bookId));
 
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<BookResponse>()
                 .setStatus(HttpStatus.OK.value())
@@ -163,6 +244,8 @@ public class BookServiceImpl implements BookService {
                 .setData(bookMapper.mapBookToBookResponse(book))
         );
     }
+
+    //    -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     @Override
     public ResponseEntity<ResponseStructure<List<BookResponse>>> findBooks() {
@@ -184,7 +267,6 @@ public class BookServiceImpl implements BookService {
         // Return the response entity with the response structure and HTTP status
         return ResponseEntity.status(HttpStatus.OK).body(responseStructure);
     }
-
 
 
 }

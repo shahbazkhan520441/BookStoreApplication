@@ -3,6 +3,7 @@ package com.book.store.application.entity;
 import com.book.store.application.enums.UserRole;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +14,9 @@ import java.util.List;
 @Setter
 public class Seller extends User {
 
-//    @OneToMany
-//    private List<Book> books;
+    @OneToOne
+    private Address address;
+
+    @OneToMany
+    private List<Book> books;
 }

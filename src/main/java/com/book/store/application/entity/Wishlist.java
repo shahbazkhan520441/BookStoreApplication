@@ -8,13 +8,17 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Wishlist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long wishlistId;
+
     @ManyToMany
     private List<Book> books;
+
+    @ManyToOne // Changed to ManyToOne for multiple wishlists
+    private Customer customer;
 }

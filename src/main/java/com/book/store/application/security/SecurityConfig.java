@@ -79,7 +79,8 @@ public class SecurityConfig {
                          "/api/v1/test/**",
                         "/api/v1/book/**",
                         "/",
-                        "/customers/{customerId}"))
+                        "/customers/{customerId}",
+                        "/api/v1/books/add"))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new LoginFilter(), UsernamePasswordAuthenticationFilter.class)

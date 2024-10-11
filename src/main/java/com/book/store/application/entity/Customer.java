@@ -1,8 +1,10 @@
 package com.book.store.application.entity;
 
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,8 +24,8 @@ public class Customer extends User {
     @OneToMany
     private List<Cart> carts;
 
-//    @OneToOne
-//    private Wishlist wishlist;
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    private List<Wishlist> wishlists;
 
 
 }

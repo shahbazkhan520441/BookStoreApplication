@@ -37,15 +37,6 @@ public class OrderMapper {
         return order;
     }
 
-    // Updating existing Order with OrderRequest data
-    public Order mapOrderRequestDtoToOrder(OrderRequest orderRequest, Order order) {
-        order.setTotalQuantity(orderRequest.getTotalQuantity());
-        order.setTotalPrice(orderRequest.getTotalPrice());
-        order.setDiscount(orderRequest.getDiscount());
-        order.setDiscountPrice(orderRequest.getDiscountPrice());
-        order.setTotalPayableAmount(orderRequest.getTotalPayableAmount());
-        return order;
-    }
 
     // Mapping Order entity to OrderResponseDto
     public OrderResponseDto mapOrderToOrderResponseDto(Order order) {
@@ -65,27 +56,13 @@ public class OrderMapper {
         return responseDto;
     }
 
-    // Mapping AddressDto to Address entity
-    private Address mapAddressDtoToAddress(AddressDto addressDto) {
-        Address address = new Address();
-        address.setStreetAddress(addressDto.getStreetAddress());
-        address.setStreetAddressAdditional(addressDto.getStreetAddressAdditional());
-        address.setCity(addressDto.getCity());
-        address.setState(addressDto.getState());
-        address.setCountry(addressDto.getCountry());
-        address.setPincode(addressDto.getPincode());
-        address.setAddressType(addressDto.getAddressType());
-        // You may need to map other fields if needed, like customer or contacts
-        return address;
-    }
+
 
     // Mapping Address entity to AddressDto
     private AddressDto mapAddressToAddressDto(Address address) {
 
-        System.out.println("in order mapper ");
         System.out.println(address.getAddressId());
        Optional<Address> optionalAddress= addressRepository.findById(address.getAddressId());
-        System.out.println("in order mapper ");
         List<Contact> contacts=null;
        if(optionalAddress.isPresent()){
            Address address1 = optionalAddress.get();
@@ -108,7 +85,6 @@ public class OrderMapper {
         for (Contact contact : contacts) {
             System.out.println(contact);
 
-            System.out.println(contact.getPriority()+"------------------------------------------------------");
             if (contact.getPriority() == Priority.PRIMARY) {
                 addressDto.setContactNumber1(contact.getContactNumber().toString());  // Setting primary contact
             } else if (contact.getPriority() == Priority.SECONDARY) {
@@ -126,18 +102,6 @@ public class OrderMapper {
 
 
 
-    // Mapping OrderRequest to OrderRequestDto
-    public OrderRequestDto mapOrderRequestToOrderRequestDto(OrderRequest orderRequest, Long orderId, AddressDto addressDto) {
-        OrderRequestDto requestDto = new OrderRequestDto();
-        requestDto.setTotalQuantity(orderRequest.getTotalQuantity());
-        requestDto.setTotalPrice(orderRequest.getTotalPrice());
-        requestDto.setDiscount(orderRequest.getDiscount());
-        requestDto.setDiscountPrice(orderRequest.getDiscountPrice());
-        requestDto.setTotalPayableAmount(orderRequest.getTotalPayableAmount());
-        requestDto.setOrderId(orderId);
-        requestDto.setAddressDto(addressDto);
-        return requestDto;
-    }
 
 
 }

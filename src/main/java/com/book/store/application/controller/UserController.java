@@ -40,8 +40,11 @@ public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
 
+//    -----------------------------------------------------------------------------------------------------------------------------------------------
+
     /**
      * Test endpoint for checking the user repository.
+     *
      * @return success message if the user is found.
      */
     @GetMapping("/test")
@@ -52,8 +55,11 @@ public class UserController {
         return "success";
     }
 
+    //    -----------------------------------------------------------------------------------------------------------------------------------------------
+
     /**
      * User login endpoint.
+     *
      * @param authRequest contains username and password.
      * @return a response with authentication token.
      */
@@ -62,8 +68,11 @@ public class UserController {
         return userService.login(authRequest);
     }
 
+    //    -----------------------------------------------------------------------------------------------------------------------------------------------
+
     /**
      * Register a new seller in the system.
+     *
      * @param userRequest the seller registration request.
      * @return a response with the registered seller details.
      */
@@ -78,8 +87,11 @@ public class UserController {
         return userService.saveUser(userRequest, UserRole.SELLER);
     }
 
+    //    -----------------------------------------------------------------------------------------------------------------------------------------------
+
     /**
      * Register a new customer in the system.
+     *
      * @param userRequest the customer registration request.
      * @return a response with the registered customer details.
      */
@@ -94,8 +106,11 @@ public class UserController {
         return userService.saveUser(userRequest, UserRole.CUSTOMER);
     }
 
+    //    -----------------------------------------------------------------------------------------------------------------------------------------------
+
     /**
      * Register a new admin in the system.
+     *
      * @param userRequest the admin registration request.
      * @return a response with the registered admin details.
      */
@@ -110,8 +125,11 @@ public class UserController {
         return userService.saveUser(userRequest, UserRole.ADMIN);
     }
 
+    //    -----------------------------------------------------------------------------------------------------------------------------------------------
+
     /**
      * Retrieve a user by their ID.
+     *
      * @param userId the ID of the user.
      * @return the user's details.
      */
@@ -121,8 +139,11 @@ public class UserController {
         return userService.findUser(userId);
     }
 
+    //    -----------------------------------------------------------------------------------------------------------------------------------------------
+
     /**
      * OTP verification for user account activation.
+     *
      * @param otpVerificationRequest contains OTP and user details.
      * @return a response confirming OTP verification.
      */
@@ -132,8 +153,11 @@ public class UserController {
         return userService.verifyUserOtp(otpVerificationRequest);
     }
 
+    //    -----------------------------------------------------------------------------------------------------------------------------------------------
+
     /**
      * Resend OTP to the user.
+     *
      * @param otpVerificationRequest contains the user details for OTP.
      * @return a response confirming OTP resending.
      */
@@ -143,10 +167,13 @@ public class UserController {
         return userService.resendOtp(otpVerificationRequest);
     }
 
+    //    -----------------------------------------------------------------------------------------------------------------------------------------------
+
     /**
      * Update a user's details by their ID.
+     *
      * @param userRequest the updated user details.
-     * @param userId the ID of the user to update.
+     * @param userId      the ID of the user to update.
      * @return the updated user's details.
      */
     @PutMapping("/users/{userId}")
@@ -155,8 +182,11 @@ public class UserController {
         return userService.updateUser(userRequest, userId);
     }
 
+    //    -----------------------------------------------------------------------------------------------------------------------------------------------
+
     /**
      * Reset the user's password using email.
+     *
      * @param email the email address to send the password reset link.
      * @return a response confirming the password reset process.
      */
@@ -166,20 +196,26 @@ public class UserController {
         return userService.passwordResetByEmail(email);
     }
 
+    //    -----------------------------------------------------------------------------------------------------------------------------------------------
+
     /**
      * Reset the user's password using OTP verification.
+     *
      * @param userRequest the updated user details.
-     * @param otp the OTP used for verification.
+     * @param otp         the OTP used for verification.
      * @return a response confirming the password reset.
      */
     @PutMapping("/users/update")
     @Operation(summary = "Password reset by OTP", description = "Resets the user's password after OTP verification.")
-    public ResponseEntity<ResponseStructure<UserResponse>> passwordResetByEmailVerification(@Valid @RequestBody UserRequest userRequest, @Valid @RequestParam String otp) {
+    public ResponseEntity<ResponseStructure<UserResponse>> passwordResetByEmailVerification(@Valid @RequestPart("userRequest") UserRequest userRequest, @Valid @RequestParam("otp") String otp) {
         return userService.passwordResetByEmailVerification(userRequest, otp);
     }
 
+    //    ----------------------------------------------------------------------0-------------------------------------------------------------------------
+
     /**
      * Retrieve all users from the database.
+     *
      * @return a list of users (SELLER, CUSTOMER, ADMIN).
      */
     @GetMapping("/users")
@@ -188,8 +224,11 @@ public class UserController {
         return userService.findUsers();
     }
 
+    //    -----------------------------------------------------------------------------------------------------------------------------------------------
+
     /**
      * Refresh the login session using a refresh token.
+     *
      * @param refreshToken the refresh token from cookies.
      * @return a response with a new access token.
      */
@@ -199,10 +238,13 @@ public class UserController {
         return userService.refreshLogin(refreshToken);
     }
 
+    //    -----------------------------------------------------------------------------------------------------------------------------------------------
+
     /**
      * Logout the user and invalidate the access and refresh tokens.
+     *
      * @param refreshToken the refresh token from cookies.
-     * @param accessToken the access token from cookies.
+     * @param accessToken  the access token from cookies.
      * @return a response confirming the logout.
      */
     @PostMapping("/logout")
@@ -210,4 +252,5 @@ public class UserController {
     public ResponseEntity<LogoutResponse> logout(@CookieValue(value = "rt", required = false) String refreshToken, @CookieValue(value = "at", required = false) String accessToken) {
         return userService.logout(refreshToken, accessToken);
     }
+//    -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 }

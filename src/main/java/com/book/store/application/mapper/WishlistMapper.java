@@ -21,10 +21,19 @@ public class WishlistMapper {
         return wishlist;
     }
 
-    public WishlistResponse mapWishlistToWishlistResponseDto(Wishlist wishlist) {
-        WishlistResponse responseDto = new WishlistResponse();
-        responseDto.setWishlistId(wishlist.getWishlistId());
-        responseDto.setBookIds(wishlist.getBooks().stream().map(Book::getBookid).collect(Collectors.toList()));
-        return responseDto;
+    public WishlistResponse mapWishlistToWishlistResponse(Wishlist wishlist) {
+        WishlistResponse response = new WishlistResponse();
+        response.setWishlistId(wishlist.getWishlistId());
+
+        // Collect remaining book IDs after removal
+        List<Long> remainingBookIds = wishlist.getBooks().stream()
+                .map(Book::getBookid) // Extract book IDs
+                .collect(Collectors.toList());
+
+        response.setBookIds(remainingBookIds);
+
+        return response;
     }
+
+
 }

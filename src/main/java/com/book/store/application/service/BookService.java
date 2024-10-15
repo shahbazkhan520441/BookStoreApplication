@@ -17,5 +17,8 @@ public interface BookService {
 
     ResponseEntity<ResponseStructure<BookResponse>> findBook(Long bookId);
 
-     ResponseEntity<ResponseStructure<List<BookResponse>>> findBooks();
+    ResponseEntity<ResponseStructure<List<BookResponse>>> findBooks();
+
+
+    ResponseEntity<ResponseStructure<BookResponse>> updateBookQuantity(Long bookId, int quantity);
 }

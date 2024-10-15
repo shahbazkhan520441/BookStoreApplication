@@ -10,8 +10,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated; // Import this
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.List;
 @RequestMapping("/api/v1")
 @AllArgsConstructor
 @Tag(name = "Address Endpoints", description = "Contains all the endpoints related to managing user addresses in the bookstore application")
+@Validated // Add this to ensure validation is applied
 public class AddressController {
 
     private final AddressService addressService;
@@ -38,7 +41,7 @@ public class AddressController {
                     })
             })
     public ResponseEntity<ResponseStructure<AddressResponse>> addAddress(
-            @RequestBody AddressRequest addressRequest,
+            @Valid @RequestBody AddressRequest addressRequest, // Add @Valid here
             @PathVariable Long userId) {
         return addressService.addAddress(addressRequest, userId);
     }
@@ -72,7 +75,7 @@ public class AddressController {
             })
     public ResponseEntity<ResponseStructure<AddressResponse>> updateAddress(
             @PathVariable Long addressId,
-            @RequestBody AddressRequest addressRequest) {
+            @Valid @RequestBody AddressRequest addressRequest) {
         return addressService.updateAddress(addressId, addressRequest);
     }
 

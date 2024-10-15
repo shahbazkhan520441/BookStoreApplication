@@ -10,9 +10,7 @@ import java.util.HashMap;
 
 @Configuration
 public class CloudinaryConfig {
-    static{
-        System.out.println("hello in cloud config");
-    }
+
 
     @Value("${cloudinary.cloud.name}")
     private String cloudinaryCloudName;
@@ -25,13 +23,11 @@ public class CloudinaryConfig {
 
     @Bean
     Cloudinary cloudinary() {
-        System.out.println("hello in cloud config");
 
         Map<String, String> config = new HashMap<String, String>();
         config.put("cloud_name", cloudinaryCloudName);
         config.put("api_key", cloudinaryApiKey);
         config.put("api_secret", cloudinaryApiSecret);
-        System.out.println("hello out cloud config");
         return new Cloudinary(config);
     }
 }

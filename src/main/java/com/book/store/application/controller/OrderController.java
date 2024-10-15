@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;  // Import for @Valid
 import java.util.List;
 
 /**
@@ -53,10 +54,10 @@ public class OrderController {
                     })
             })
     public ResponseEntity<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(
-            @RequestBody OrderRequest orderRequest,
-            @PathVariable Long bookId,
-            @PathVariable Long customerId,
-            @PathVariable Long addressId) {
+            @RequestBody @Valid OrderRequest orderRequest,  // Added @Valid annotation here
+            @PathVariable @Valid Long bookId,               // Added @Valid annotation here
+            @PathVariable @Valid Long customerId,           // Added @Valid annotation here
+            @PathVariable @Valid Long addressId) {          // Added @Valid annotation here
         return orderService.generatePurchaseOrder(orderRequest, bookId, customerId, addressId);
     }
 
@@ -79,7 +80,7 @@ public class OrderController {
                     })
             })
     public ResponseEntity<ResponseStructure<List<OrderResponseDto>>> findPurchaseOrders(
-            @PathVariable Long customerId) {
+            @PathVariable @Valid Long customerId) {  // Added @Valid annotation here
         return orderService.findPurchaseOrders(customerId);
     }
 
@@ -101,10 +102,9 @@ public class OrderController {
                             @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorStructure.class))
                     })
             })
-    public ResponseEntity<ResponseStructure<OrderResponseDto>> findPurchaseOrder(@PathVariable Long orderId) {
+    public ResponseEntity<ResponseStructure<OrderResponseDto>> findPurchaseOrder(@PathVariable @Valid Long orderId) {  // Added @Valid annotation here
         return orderService.findPurchaseOrder(orderId);
     }
 
     //------------------------------------------------------------------------------------------------------------------------
-
 }

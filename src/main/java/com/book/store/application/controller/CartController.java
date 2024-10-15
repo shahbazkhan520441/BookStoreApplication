@@ -10,8 +10,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,7 +53,7 @@ public class CartController {
                     })
             })
     public ResponseEntity<ResponseStructure<CartBookResponse>> addBookInCart(
-            @RequestBody CartRequest cartRequest,
+            @Valid @RequestBody CartRequest cartRequest, // Added @Valid here
             @PathVariable Long customerId) {
         return cartService.addBookInCart(cartRequest, customerId);
     }

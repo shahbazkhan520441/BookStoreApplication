@@ -12,6 +12,7 @@ import com.book.store.application.repository.WishlistRepository;
 import com.book.store.application.requestdto.WishlistRequest;
 import com.book.store.application.responsedto.WishlistResponse;
 import com.book.store.application.service.WishlistService;
+import com.book.store.application.util.ResponseStructure;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,49 +30,113 @@ public class WishlistServiceImpl implements WishlistService {
     private final WishlistMapper wishlistMapper;
 
     @Override
-    public ResponseEntity<WishlistResponse> addBookToWishlist(WishlistRequest wishlistRequest, Long customerId) {
+    public ResponseEntity<ResponseStructure<WishlistResponse>> addBookToWishlist(WishlistRequest wishlistRequest, Long customerId) {
         Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new CustomerNotExistException("Customer Id : " + customerId + ", does not exist"));
+                .orElseThrow(() -> new CustomerNotExistException("Customer with ID: " + customerId + " does not exist"));
 
         Book book = bookRepository.findById(wishlistRequest.getBookId())
-                .orElseThrow(() -> new BookNotExistException("Book Id : " + wishlistRequest.getBookId() + ", does not exist"));
+                .orElseThrow(() -> new BookNotExistException("Book with ID: " + wishlistRequest.getBookId() + " does not exist"));
 
-        // Check if customer already has a wishlist
         Wishlist wishlist;
+        ResponseStructure<WishlistResponse> responseStructure = new ResponseStructure<>();
         if (customer.getWishlists() == null || customer.getWishlists().isEmpty()) {
             // Create a new wishlist
             wishlist = wishlistMapper.mapWishlistRequestToWishlist(wishlistRequest, customer, book);
+            wishlistRepository.save(wishlist);
+            WishlistResponse responseDto = wishlistMapper.mapWishlistToWishlistResponse(wishlist);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(
+                    responseStructure
+                            .setStatus(HttpStatus.CREATED.value())
+                            .setMessage("Wishlist created and book added successfully.")
+                            .setData(responseDto)
+            );
         } else {
-            // Add the book to the existing wishlist
             wishlist = customer.getWishlists().get(0); // Get the first wishlist
+            if (wishlist.getBooks().contains(book)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                        responseStructure
+                                .setStatus(HttpStatus.CONFLICT.value())
+                                .setMessage("Book is already in your wishlist.")
+                                .setData(null)
+                );
+            }
             wishlist.getBooks().add(book);
+            wishlistRepository.save(wishlist);
+            WishlistResponse responseDto = wishlistMapper.mapWishlistToWishlistResponse(wishlist);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(
+                    responseStructure
+                            .setStatus(HttpStatus.CREATED.value())
+                            .setMessage("Book added to wishlist successfully.")
+                            .setData(responseDto)
+            );
         }
-
-        // Save the wishlist
-        wishlistRepository.save(wishlist);
-
-        WishlistResponse responseDto = wishlistMapper.mapWishlistToWishlistResponseDto(wishlist);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     @Override
-    public ResponseEntity<WishlistResponse> removeBookFromWishlist(WishlistRequest wishlistRequest, Long customerId) {
+    public ResponseEntity<ResponseStructure<WishlistResponse>> removeBookFromWishlist(WishlistRequest wishlistRequest, Long customerId) {
         Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new CustomerNotExistException("Customer Id : " + customerId + ", does not exist"));
+                .orElseThrow(() -> new CustomerNotExistException("Customer with ID: " + customerId + " does not exist"));
 
-        Wishlist wishlist = customer.getWishlists().get(0); // Get the first wishlist
+        Wishlist wishlist = customer.getWishlists().get(0); // Assuming the first wishlist is being used.
 
-        // Remove the book from the wishlist
+        // Find the book to be removed by its ID from the wishlist
         Optional<Book> bookToRemove = wishlist.getBooks().stream()
                 .filter(book -> book.getBookid().equals(wishlistRequest.getBookId()))
                 .findFirst();
 
-        if (bookToRemove.isPresent()) {
-            wishlist.getBooks().remove(bookToRemove.get());
-            wishlistRepository.save(wishlist); // Save updated wishlist
-        }
+        ResponseStructure<WishlistResponse> responseStructure = new ResponseStructure<>();
 
-        WishlistResponse responseDto = wishlistMapper.mapWishlistToWishlistResponseDto(wishlist);
-        return ResponseEntity.ok(responseDto);
+        if (bookToRemove.isPresent()) {
+            // Capture the book ID to remove
+            Long removedBookId = bookToRemove.get().getBookid();
+
+            // Remove the book from the wishlist
+            wishlist.getBooks().remove(bookToRemove.get());
+
+            // Save the updated wishlist to persist changes
+            wishlistRepository.save(wishlist);
+
+            // Map the updated wishlist to the response DTO
+            WishlistResponse responseDto = wishlistMapper.mapWishlistToWishlistResponse(wishlist);
+
+            // Return response with the correct removed book ID and remaining books
+            return ResponseEntity.ok(
+                    responseStructure
+                            .setStatus(HttpStatus.OK.value())
+                            .setMessage("Book removed from wishlist successfully. Removed book ID: " + removedBookId)
+                            .setData(responseDto)
+            );
+        } else {
+            // If book is not found in the wishlist
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    responseStructure
+                            .setStatus(HttpStatus.NOT_FOUND.value())
+                            .setMessage("Book not found in your wishlist.")
+                            .setData(null)
+            );
+        }
     }
+
+
+
+    @Override
+    public ResponseEntity<ResponseStructure<WishlistResponse>> getWishlistByCustomerId(Long customerId) {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new CustomerNotExistException("Customer with ID: " + customerId + " does not exist"));
+
+        Wishlist wishlist = customer.getWishlists().get(0); // Get the first wishlist
+        WishlistResponse wishlistResponse = wishlistMapper.mapWishlistToWishlistResponse(wishlist);
+
+        ResponseStructure<WishlistResponse> responseStructure = new ResponseStructure<>();
+        return ResponseEntity.ok(
+                responseStructure
+                        .setStatus(HttpStatus.OK.value())
+                        .setMessage("Wishlist retrieved successfully.")
+                        .setData(wishlistResponse)
+        );
+    }
+
+
 }

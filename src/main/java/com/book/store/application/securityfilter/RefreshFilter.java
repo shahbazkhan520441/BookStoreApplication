@@ -27,6 +27,7 @@ import java.util.Optional;
 
 @AllArgsConstructor
 public class RefreshFilter extends OncePerRequestFilter {
+
     private final JwtService jwtService;
     private final RefreshTokenRepository refreshTokenRepository;
 

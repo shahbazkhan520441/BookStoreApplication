@@ -34,6 +34,7 @@ public class SecurityConfig {
 
     @Bean
     PasswordEncoder passwordEncoder() {
+
         return new BCryptPasswordEncoder(12);
     }
 
@@ -74,13 +75,11 @@ public class SecurityConfig {
                         "/api/v1/users/resendOtp/**",
                         "/api/v1/sellers/register/**",
                         "/api/v1/customers/register/**",
-                        "/api/v1/products/**",
+                        "/api/v1/admin/register/**",
                         "/login/**",
                          "/api/v1/test/**",
-                        "/api/v1/book/**",
-                        "/",
-                        "/customers/{customerId}",
-                        "/api/v1/books/add"))
+                        "/"
+                        ))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new LoginFilter(), UsernamePasswordAuthenticationFilter.class)

@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;  // Import for @Valid
 import java.util.List;
 
 @RestController
@@ -42,7 +43,7 @@ public class DiscountController {
                     })
             })
     public ResponseEntity<ResponseStructure<List<DiscountResponse>>> getDiscounts(
-            @PathVariable Long productId) {
+            @PathVariable @Valid Long productId) { // Added @Valid annotation to productId
         return discountService.getDiscounts(productId);
     }
 
@@ -69,9 +70,9 @@ public class DiscountController {
                     })
             })
     public ResponseEntity<ResponseStructure<DiscountResponse>> updateDiscount(
-            @PathVariable Long sellerId,
-            @PathVariable Long discountId,
-            @RequestBody DiscountRequest discountRequest) {
+            @PathVariable @Valid Long sellerId,     // Added @Valid annotation to sellerId
+            @PathVariable @Valid Long discountId,   // Added @Valid annotation to discountId
+            @RequestBody @Valid DiscountRequest discountRequest) { // Added @Valid annotation to discountRequest
         return discountService.updateDiscount(sellerId, discountId, discountRequest);
     }
 }

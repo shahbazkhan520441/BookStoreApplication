@@ -33,9 +33,9 @@ public class BookController {
     /**
      * Adds a new book along with its image to the database.
      *
-     * @param quantity     the quantity of the book to be added.
-     * @param bookImage    the image file of the book.
-     * @param bookRequest  the details of the book to be added, wrapped in a BookRequest object.
+     * @param quantity    the quantity of the book to be added.
+     * @param bookImage   the image file of the book.
+     * @param bookRequest the details of the book to be added, wrapped in a BookRequest object.
      * @return ResponseEntity containing a ResponseStructure with the added BookResponse object.
      * @throws IOException if there is an error processing the image file.
      */
@@ -50,7 +50,8 @@ public class BookController {
     public ResponseEntity<ResponseStructure<BookResponse>> addBook(
             @RequestParam("quantity") int quantity,
             @RequestPart("bookImage") MultipartFile bookImage,
-            @RequestPart("bookrequest") @Valid BookRequest bookRequest) throws IOException {
+            @RequestPart("bookrequest") @Valid BookRequest bookRequest) throws IOException { // @Valid added here
+
         return bookService.addBook(quantity, bookImage, bookRequest);
     }
 
@@ -81,9 +82,29 @@ public class BookController {
             @PathVariable Long bookId,
             @RequestParam int quantity,
             @RequestPart("bookImage") MultipartFile bookImage,
-            @RequestPart("bookrequest") @Valid BookRequest bookRequest) throws IOException {
+            @RequestPart("bookrequest") @Valid BookRequest bookRequest) throws IOException { // @Valid added here
         return bookService.updateBook(bookId, quantity, bookImage, bookRequest);
     }
+
+//    --------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    @PatchMapping("/books/{bookId}/quantity")
+    @Operation(description = "The endpoint is used to update the quantity of an existing book in the database.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Book quantity successfully updated"),
+                    @ApiResponse(responseCode = "400", description = "Invalid input", content = {
+                            @Content(schema = @Schema(oneOf = ErrorStructure.class))
+                    }),
+                    @ApiResponse(responseCode = "404", description = "Book not found", content = {
+                            @Content(schema = @Schema(oneOf = ErrorStructure.class))
+                    })
+            })
+    public ResponseEntity<ResponseStructure<BookResponse>> updateBookQuantity(
+            @PathVariable Long bookId,
+            @RequestParam int quantity) {
+        return bookService.updateBookQuantity(bookId, quantity);
+    }
+
 
     //------------------------------------------------------------------------------------------------------------------------
 

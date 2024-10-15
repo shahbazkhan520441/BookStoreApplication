@@ -1,3 +1,4 @@
+
 package com.book.store.application.controller;
 
 import com.book.store.application.responsedto.UserResponse;
@@ -41,7 +42,7 @@ public class CustomerController {
                             @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorStructure.class))
                     })
             })
-    public ResponseEntity<ResponseStructure<UserResponse>> findCustomer(@Valid @PathVariable Long customerId) {
+    public ResponseEntity<ResponseStructure<UserResponse>> findCustomer(@PathVariable @Valid Long customerId) { // Added @Valid annotation to customerId
         return customerService.findCustomer(customerId);
     }
 
@@ -66,4 +67,5 @@ public class CustomerController {
     }
 
     //------------------------------------------------------------------------------------------------------------------------
+
 }

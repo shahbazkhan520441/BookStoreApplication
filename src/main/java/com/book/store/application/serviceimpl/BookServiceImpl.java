@@ -270,5 +270,29 @@ public class BookServiceImpl implements BookService {
         return ResponseEntity.status(HttpStatus.OK).body(responseStructure);
     }
 
+//    -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+@Override
+public ResponseEntity<ResponseStructure<BookResponse>> updateBookQuantity(Long bookId, int quantity) {
+    // Fetch the book from the repository
+    Book book = bookRepository
+            .findById(bookId)
+            .orElseThrow(() -> new IllegalArgumentException("Book Id : " + bookId + " does not exist"));
+
+    // Update the book quantity
+    book.setBookQuantity(quantity);
+
+    // Set the availability status based on the quantity
+    book.setAvailabilityStatus(quantity > 0 ? AvailabilityStatus.YES : AvailabilityStatus.NO);
+
+    // Save the updated book
+    book = bookRepository.save(book);
+
+    // Return the updated book in the response
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<BookResponse>()
+            .setStatus(HttpStatus.OK.value())
+            .setMessage("Book quantity updated successfully.")
+            .setData(bookMapper.mapBookToBookResponse(book)));
+}
+
 
 }

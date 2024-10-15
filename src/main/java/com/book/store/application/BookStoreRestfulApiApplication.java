@@ -1,4 +1,4 @@
-package com.school.management.system;
+package com.book.store.application;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class BookStoreRestfulApiApplication {
 
 	public static void main(String[] args) {
+		
 		SpringApplication.run(BookStoreRestfulApiApplication.class, args);
 	}
 

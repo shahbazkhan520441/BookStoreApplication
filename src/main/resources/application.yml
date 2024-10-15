@@ -1,0 +1,59 @@
+spring:
+  application:
+    name: BookStore_RestfulAPI
+  security:
+    user:
+      name: sk
+      password: 12345
+
+    #  DataSource configuration
+  datasource:
+    url: jdbc:mysql://localhost:3306/book_store_application?createDatabaseIfNotExist=true
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  #      driver-class-name: com.mysql.cj.jdbc.Driver
+
+  #  JPA Configuration
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+  # SMTP configuration
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+            required: true
+
+
+# Application Custom configuration    (3600000 = 1hour and 1296000000 = 15days) in milli
+# (3600 = 1hour and 1296000 = 15days) in seconds
+application:
+  jwt:
+    secrete: ${JWT_SECRET}
+    access_expiry_seconds: 3600
+    refresh_expiry_seconds: 1296000
+  cookie:
+    domain: localhost
+    same_site: Lax
+    secure: false
+
+#debug: true
+
+#Cloudinary configuration for image upload
+cloudinary:
+  cloud:
+    name: ${CLOUDINARY_CLOUD_NAME}
+  api:
+    key: ${CLOUDINARY_API_KEY}
+    secret: ${CLOUDINARY_API_SECRET}

@@ -5,6 +5,9 @@ spring:
     user:
       name: sk
       password: 12345
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
 
     #  DataSource configuration
   datasource:

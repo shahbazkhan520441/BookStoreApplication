@@ -174,11 +174,11 @@ public class UserServiceImpl implements UserService {
     public String generateCookie(String name, String tokenValue, long maxAge) {
         return ResponseCookie.from(name, tokenValue)
                 .httpOnly(true)
-                .secure(secure)
+                .secure(false)
                 .path("/")
                 .maxAge(maxAge)
 //                .domain(domain)
-                .sameSite(sameSite) // how can issue  cookie to particular browser
+                .sameSite("Lax") // how can issue  cookie to particular browser
                 .build()
                 .toString();
     }

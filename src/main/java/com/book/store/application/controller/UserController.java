@@ -33,6 +33,7 @@ import lombok.AllArgsConstructor;
  */
 @RestController
 @RequestMapping("/api/v1")
+@CrossOrigin(origins = "http://localhost:4200")
 @AllArgsConstructor
 @Tag(name = "Users Endpoints", description = "Contains all the endpoints related to the Users entity")
 public class UserController {
@@ -65,6 +66,7 @@ public class UserController {
      */
     @PostMapping("/login")
     public ResponseEntity<ResponseStructure<AuthResponse>> login(@RequestBody UserAuthRequest authRequest) {
+        System.out.println(authRequest.getUsername()+" " + authRequest.getPassword());
         return userService.login(authRequest);
     }
 

@@ -30,7 +30,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
@@ -38,7 +38,18 @@ public class OrderServiceImpl implements OrderService {
     private final AddressRepository addressRepository;
     private final BookRepository bookRepository; // Assuming this exists
     private final OrderMapper orderMapper;
-    private final UserService userService; // Remove WebClient
+    private final UserService userService;
+
+    public OrderServiceImpl(OrderRepository orderRepository, CustomerRepository customerRepository, AddressRepository addressRepository, BookRepository bookRepository, OrderMapper orderMapper, UserService userService) {
+        this.orderRepository = orderRepository;
+        this.customerRepository = customerRepository;
+        this.addressRepository = addressRepository;
+        this.bookRepository = bookRepository;
+        this.orderMapper = orderMapper;
+        this.userService = userService;
+    }
+
+    // Remove WebClient
 
     @Override
     public ResponseEntity<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(

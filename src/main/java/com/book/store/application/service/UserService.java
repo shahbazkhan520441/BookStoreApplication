@@ -7,6 +7,7 @@ import com.book.store.application.entity.User;
 import com.book.store.application.requestdto.UserAuthRequest;
 import com.book.store.application.responsedto.AuthResponse;
 import com.book.store.application.responsedto.LogoutResponse;
+import com.book.store.application.responsedto.OtpVerficationResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
@@ -30,7 +31,7 @@ public interface UserService {
 
 	 ResponseEntity<ResponseStructure<UserResponse>> saveUser(MainUserRequest userRequest, UserRole userRole);
 	 
-	  ResponseEntity<ResponseStructure<UserResponse>> verifyUserOtp(OtpVerificationRequest otpVerificationRequest);
+	  ResponseEntity<ResponseStructure<OtpVerficationResponse>> verifyUserOtp(OtpVerificationRequest otpVerificationRequest);
 
 	ResponseEntity<ResponseStructure<UserResponse>> resendOtp(OtpVerificationRequest otpVerificationRequest);
 

@@ -38,16 +38,22 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+        System.out.println("in jwt auth filter");
+        Cookie[] cookies = request.getCookies();
+        System.out.println(cookies);
         String rt = null;
         String at = null;
-
-        Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("rt"))
+                if (cookie.getName().equals("rt")) {
                     rt = cookie.getValue();
-                else if (cookie.getName().equals("at"))
+                    System.out.println(rt + "refresh token auth filter");
+                }
+                else if (cookie.getName().equals("at")) {
                     at = cookie.getValue();
+                    System.out.println(at + "access token auth filter");
+                }
             }
         }
         if (at != null && rt != null) {
@@ -91,6 +97,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 return;
             }
         }
+
+
+        System.out.println("out of jwt auth filter");
         filterChain.doFilter(request, response);
     }
 }

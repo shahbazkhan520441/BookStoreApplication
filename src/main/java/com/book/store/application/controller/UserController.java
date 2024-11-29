@@ -8,6 +8,7 @@ import com.book.store.application.repository.UserRepository;
 import com.book.store.application.requestdto.UserAuthRequest;
 import com.book.store.application.responsedto.AuthResponse;
 import com.book.store.application.responsedto.LogoutResponse;
+import com.book.store.application.responsedto.OtpVerficationResponse;
 import com.book.store.application.util.ErrorStructure;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -65,6 +66,7 @@ public class UserController {
      */
     @PostMapping("/login")
     public ResponseEntity<ResponseStructure<AuthResponse>> login(@RequestBody UserAuthRequest authRequest) {
+        System.out.println(authRequest.getUsername()+" " + authRequest.getPassword());
         return userService.login(authRequest);
     }
 
@@ -149,7 +151,7 @@ public class UserController {
      */
     @PostMapping("/users/otpVerification")
     @Operation(summary = "Verify user OTP", description = "Verifies the OTP to activate the user account.")
-    public ResponseEntity<ResponseStructure<UserResponse>> verifyUser(@RequestBody OtpVerificationRequest otpVerificationRequest) {
+    public ResponseEntity<ResponseStructure<OtpVerficationResponse>> verifyUser(@RequestBody OtpVerificationRequest otpVerificationRequest) {
         return userService.verifyUserOtp(otpVerificationRequest);
     }
 

@@ -23,6 +23,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+
 
 @Configuration
 @EnableWebSecurity
@@ -42,11 +48,30 @@ public class SecurityConfig {
     }
 
     @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:4200",
+                "/**"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+        configuration.setAllowedHeaders(Arrays.asList(
+                "Authorization",
+                "Cache-Control",
+                "Content-Type"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
+
+    @Bean
     @Order(3)
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
+                .cors(cors->cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
-                .securityMatchers(match -> match.requestMatchers("/api/v1/**"))
+                .securityMatchers(match -> match.requestMatchers("/api/v1/**","/api/v1/books/**"))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JwtAuthFilter(jwtService, refreshTokenRepository, accessTokenRepository),
@@ -57,7 +82,9 @@ public class SecurityConfig {
     @Bean
     @Order(2)
     SecurityFilterChain securityFilterChainRefreshFilter(HttpSecurity httpSecurity) throws Exception {
+        System.out.println("in jwt auth filter");
         return httpSecurity
+                .cors(cors->cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .securityMatchers(match -> match.requestMatchers("/api/v1/refreshLogin/**"))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
@@ -70,7 +97,9 @@ public class SecurityConfig {
     @Bean
     @Order(1)
     SecurityFilterChain securityFilterChainCheckLogin(HttpSecurity httpSecurity) throws Exception {
+        System.out.println("in login auth filter");
         return httpSecurity
+                .cors(cors->cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .securityMatchers(match -> match.requestMatchers("/api/v1/login/**",
                         "/api/v1/users/update/**",
@@ -80,6 +109,8 @@ public class SecurityConfig {
                         "/api/v1/customers/register/**",
                         "/api/v1/admin/register/**",
                          "/api/v1/test/**"
+
+
                         ))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

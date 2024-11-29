@@ -8,6 +8,7 @@ import com.book.store.application.repository.UserRepository;
 import com.book.store.application.requestdto.UserAuthRequest;
 import com.book.store.application.responsedto.AuthResponse;
 import com.book.store.application.responsedto.LogoutResponse;
+import com.book.store.application.responsedto.OtpVerficationResponse;
 import com.book.store.application.util.ErrorStructure;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,7 +34,6 @@ import lombok.AllArgsConstructor;
  */
 @RestController
 @RequestMapping("/api/v1")
-@CrossOrigin(origins = "http://localhost:4200")
 @AllArgsConstructor
 @Tag(name = "Users Endpoints", description = "Contains all the endpoints related to the Users entity")
 public class UserController {
@@ -151,7 +151,7 @@ public class UserController {
      */
     @PostMapping("/users/otpVerification")
     @Operation(summary = "Verify user OTP", description = "Verifies the OTP to activate the user account.")
-    public ResponseEntity<ResponseStructure<UserResponse>> verifyUser(@RequestBody OtpVerificationRequest otpVerificationRequest) {
+    public ResponseEntity<ResponseStructure<OtpVerficationResponse>> verifyUser(@RequestBody OtpVerificationRequest otpVerificationRequest) {
         return userService.verifyUserOtp(otpVerificationRequest);
     }
 

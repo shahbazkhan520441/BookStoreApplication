@@ -19,6 +19,7 @@ import com.book.store.application.requestdto.UserAuthRequest;
 import com.book.store.application.responsedto.AuthResponse;
 
 import com.book.store.application.responsedto.LogoutResponse;
+import com.book.store.application.responsedto.OtpVerficationResponse;
 import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.http.HttpHeaders;
@@ -174,14 +175,15 @@ public class UserServiceImpl implements UserService {
     public String generateCookie(String name, String tokenValue, long maxAge) {
         return ResponseCookie.from(name, tokenValue)
                 .httpOnly(true)
-                .secure(false)
+                .domain("localhost")
+                .secure(false) // Allow cookies to be sent over HTTP on localhost
                 .path("/")
                 .maxAge(maxAge)
-//                .domain(domain)
-                .sameSite("Lax") // how can issue  cookie to particular browser
+                .sameSite("Lax") // Adjust SameSite as needed for your use case
                 .build()
                 .toString();
     }
+
 
     //----------------------------------------------------------------------------------------------------------------------------------------------------------
     @Override
@@ -250,7 +252,7 @@ public class UserServiceImpl implements UserService {
 
     //	    -------------------------------------------------------
     @Override
-    public ResponseEntity<ResponseStructure<UserResponse>> verifyUserOtp(OtpVerificationRequest otpVerificationRequest) {
+    public ResponseEntity<ResponseStructure<OtpVerficationResponse>> verifyUserOtp(OtpVerificationRequest otpVerificationRequest) {
         User user = userCache.getIfPresent(otpVerificationRequest.getEmail());
         String otp = otpCache.getIfPresent(otpVerificationRequest.getEmail());
         if (user == null && otp == null) {
@@ -262,14 +264,22 @@ public class UserServiceImpl implements UserService {
 //            oto mismatch with existing otp   or   invalid otp
             throw new InvalidOtpException("Invalid otp");
         } else if (otp.equals(otpVerificationRequest.getOtp()) && user != null) {
+
+            OtpVerficationResponse otpVerficationResponse = new OtpVerficationResponse();
+
 //            If user otp and cache otp
 //           Create Dynamic username
             if (user.getUsername() == null) {
                 String userGen = usernameGenerate(user.getEmail());
+
                 user.setUsername(userGen);
                 user.setEmailVerified(true);
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
                 user = userRepository.save(user);
+
+                otpVerficationResponse.setUserId(user.getUserid());
+                otpVerficationResponse.setUsername(userGen);
+                otpVerficationResponse.setSuccess(true);
                 //            Send mail to user for confirmation
                 mailSend(user.getEmail(), "Email Verification done", "<h3>Your account is created in Book Store Application</h3></br><h4>Your username is : " + userGen + " and UserRole is : " + user.getUserRole() + "</h4>");
             } else if (user.getPassword() != null) {
@@ -277,16 +287,16 @@ public class UserServiceImpl implements UserService {
                 user = userRepository.save(user);
                 mailSend(user.getEmail(), "Profile successfully updated", "<h3>Your account is updated in Book Store Application</h3></br><h4>Your username is : " + user.getUsername() + " and UserRole is : " + user.getUserRole() + "</h4>");
             } else {
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<UserResponse>()
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<OtpVerficationResponse>()
                         .setStatus(HttpStatus.OK.value())
                         .setMessage("User verified")
-                        .setData(userMapper.mapUserToUserResponse(user)));
+                        .setData(otpVerficationResponse));
             }
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<UserResponse>()
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseStructure<OtpVerficationResponse>()
                     .setStatus(HttpStatus.CREATED.value())
                     .setMessage(user.getUserRole() + " Created or Updated")
-                    .setData(userMapper.mapUserToUserResponse(user)));
+                    .setData(otpVerficationResponse));
         } else {
             throw new OtpExpiredException("Otp is expired");
         }

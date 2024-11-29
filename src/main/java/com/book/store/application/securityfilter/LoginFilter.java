@@ -27,9 +27,10 @@ public class LoginFilter extends OncePerRequestFilter {
 
                 if (cookie.getName().equals("at") || cookie.getName().equals("rt")) {
                     loggedIn = true;
+                    break;
                 }
             }
-        System.out.println(loggedIn+" in login filter");
+        System.out.println(loggedIn+" loggedIn");
 
         if (loggedIn) {
             FilterExceptionHandler.handleJwtExpire(response,
@@ -39,6 +40,7 @@ public class LoginFilter extends OncePerRequestFilter {
             return;
         }
         else
+            System.out.println("out of login fiter");
             filterChain.doFilter(request, response);
     }
 }

@@ -41,7 +41,7 @@ public class AddressServiceImpl implements AddressService {
         if (user.getUserRole().equals(UserRole.CUSTOMER)) {
             if (user instanceof Customer) {
                 Customer customer = (Customer) user;
-                if (customer.getAddresses().size() >= 4) {
+                if (customer.getAddresses().size() >= 10) {
                     throw new AlreadyAddressExistException("Customer cannot have more than 4 addresses");
                 }
                 address.setCustomer(customer);

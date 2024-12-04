@@ -28,7 +28,7 @@ public class WishlistController {
 
     //---------------------------------------------------------------------------------------------------
 
-    @PostMapping("/add/{customerId}")
+    @PostMapping("/addWishlist/{customerId}")
     @Operation(summary = "Add Book to Wishlist", description = "Adds a book to the customer's wishlist.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Book successfully added to wishlist",

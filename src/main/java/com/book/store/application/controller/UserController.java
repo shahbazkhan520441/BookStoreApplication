@@ -1,5 +1,6 @@
 package com.book.store.application.controller;
 
+import java.sql.SQLOutput;
 import java.util.List;
 
 import com.book.store.application.entity.User;
@@ -252,6 +253,7 @@ public class UserController {
     @PostMapping("/logout")
     @Operation(summary = "Logout the user", description = "Logs out the user by invalidating the access and refresh tokens.")
     public ResponseEntity<LogoutResponse> logout(@CookieValue(value = "rt", required = false) String refreshToken, @CookieValue(value = "at", required = false) String accessToken) {
+        System.out.println(" in logou of controller ");
         return userService.logout(refreshToken, accessToken);
     }
 //    -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

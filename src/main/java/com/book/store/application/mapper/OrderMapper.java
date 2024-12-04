@@ -23,7 +23,7 @@ public class OrderMapper {
 
  private final AddressRepository addressRepository;
     // Mapping OrderRequest to Order entity
-    public Order mapOrderRequestToOrder(OrderRequest orderRequest, Customer customer, Address address, Book book) {
+    public Order mapOrderRequestToOrder(OrderRequest orderRequest, Customer customer, Address address, List<Book> books) {
         Order order = new Order();
         order.setTotalQuantity(orderRequest.getTotalQuantity());
         order.setTotalPrice(orderRequest.getTotalPrice());
@@ -32,7 +32,7 @@ public class OrderMapper {
         order.setTotalPayableAmount(orderRequest.getTotalPayableAmount());
         order.setCustomer(customer);
         order.setAddress(address);
-        order.setBook(book);
+        order.setBooks(books);
         order.setOrderDate(LocalDate.now()); // Assuming you want to set the current date
         return order;
     }
@@ -43,7 +43,7 @@ public class OrderMapper {
         OrderResponseDto responseDto = new OrderResponseDto();
         responseDto.setOrderId(order.getOrderId());
         responseDto.setCustomerId(order.getCustomer().getUserid()); // Assuming customer has a method getUserid()
-        responseDto.setBookId(order.getBook().getBookid()); // Assuming book has a method getBookid()
+        responseDto.setBookIds(order.getBooks().stream().map(Book::getBookid).toList());
         responseDto.setTotalQuantity(order.getTotalQuantity());
         responseDto.setTotalPrice(order.getTotalPrice());
         responseDto.setDiscount(order.getDiscount());

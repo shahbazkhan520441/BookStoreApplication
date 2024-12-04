@@ -55,6 +55,9 @@ public class CartController {
     public ResponseEntity<ResponseStructure<CartBookResponse>> addBookInCart(
             @Valid @RequestBody CartRequest cartRequest, // Added @Valid here
             @PathVariable Long customerId) {
+        System.out.println("cartRequest = ---------------------------------------------------------------------------------------------------------------------" );
+        System.out.println("cartRequest = " + cartRequest);
+        System.out.println("customerId = " + customerId);
         return cartService.addBookInCart(cartRequest, customerId);
     }
 
@@ -142,7 +145,7 @@ public class CartController {
      * @param customerId the ID of the customer.
      * @return a response containing a list of cart products.
      */
-    @GetMapping("/customers/{customerId}/cart-books")
+    @GetMapping("/customer/{customerId}")
     @Operation(summary = "Get Cart Products", description = "Retrieves all products in the customer's cart based on the customer ID.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Products successfully retrieved", content = {
@@ -154,6 +157,10 @@ public class CartController {
             })
     public ResponseEntity<ResponseStructure<List<CartBookResponse>>> getCartProducts(
             @PathVariable Long customerId) {
+        System.out.println("Customer ID: " + customerId+"------------------------------------------------------in the getcartbyid");
+
+
+
         return cartService.getCartProducts(customerId);
     }
 

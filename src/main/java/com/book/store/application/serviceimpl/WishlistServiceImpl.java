@@ -2,14 +2,18 @@ package com.book.store.application.serviceimpl;
 
 import com.book.store.application.entity.Book;
 import com.book.store.application.entity.Customer;
+import com.book.store.application.entity.Image;
 import com.book.store.application.entity.Wishlist;
 import com.book.store.application.exception.BookNotExistException;
 import com.book.store.application.exception.CustomerNotExistException;
+import com.book.store.application.exception.WishlistNotFoundException;
+import com.book.store.application.mapper.BookMapper;
 import com.book.store.application.mapper.WishlistMapper;
 import com.book.store.application.repository.BookRepository;
 import com.book.store.application.repository.CustomerRepository;
 import com.book.store.application.repository.WishlistRepository;
 import com.book.store.application.requestdto.WishlistRequest;
+import com.book.store.application.responsedto.BookResponse;
 import com.book.store.application.responsedto.WishlistResponse;
 import com.book.store.application.service.WishlistService;
 import com.book.store.application.util.ResponseStructure;
@@ -18,7 +22,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -28,6 +34,7 @@ public class WishlistServiceImpl implements WishlistService {
     private final BookRepository bookRepository;
     private final WishlistRepository wishlistRepository;
     private final WishlistMapper wishlistMapper;
+    private final BookMapper bookMapper;
 
     @Override
     public ResponseEntity<ResponseStructure<WishlistResponse>> addBookToWishlist(WishlistRequest wishlistRequest, Long customerId) {
@@ -121,22 +128,37 @@ public class WishlistServiceImpl implements WishlistService {
 
 
 
+
+
     @Override
     public ResponseEntity<ResponseStructure<WishlistResponse>> getWishlistByCustomerId(Long customerId) {
+        // Fetch customer and validate existence
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotExistException("Customer with ID: " + customerId + " does not exist"));
 
-        Wishlist wishlist = customer.getWishlists().get(0); // Get the first wishlist
-        WishlistResponse wishlistResponse = wishlistMapper.mapWishlistToWishlistResponse(wishlist);
+        // Fetch the first wishlist for the customer
+        Wishlist wishlist = customer.getWishlists().get(0); // Ensure this logic aligns with your business rules
 
+        // Map books in the wishlist to BookResponse using the BookMapper
+        List<BookResponse> bookResponses = wishlist.getBooks().stream()
+                .map(book -> bookMapper.mapBookToBookResponse(book)) // Use the improved mapper
+                .collect(Collectors.toList());
+
+        // Create WishlistResponse DTO
+        WishlistResponse wishlistResponse = new WishlistResponse();
+        wishlistResponse.setWishlistId(wishlist.getWishlistId());
+        wishlistResponse.setBooks(bookResponses);
+
+        // Create ResponseStructure and return
         ResponseStructure<WishlistResponse> responseStructure = new ResponseStructure<>();
-        return ResponseEntity.ok(
-                responseStructure
-                        .setStatus(HttpStatus.OK.value())
-                        .setMessage("Wishlist retrieved successfully.")
-                        .setData(wishlistResponse)
-        );
+        responseStructure.setStatus(HttpStatus.OK.value())
+                .setMessage("Wishlist retrieved successfully.")
+                .setData(wishlistResponse);
+
+        return ResponseEntity.ok(responseStructure);
     }
+
+
 
 
 }

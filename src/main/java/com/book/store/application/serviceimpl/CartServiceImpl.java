@@ -194,7 +194,10 @@ public class CartServiceImpl implements CartService {
         List<Cart> carts = customer.getCarts();
 
         // Return a proper response if no carts are found
+        System.out.println("----------------------------------------------------------------------------------------");
+        System.out.println(carts);
         if (carts.isEmpty()) {
+
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseStructure<List<CartBookResponse>>()
                     .setStatus(HttpStatus.OK.value())
                     .setMessage("No cart found")

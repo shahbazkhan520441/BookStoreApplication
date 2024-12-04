@@ -68,10 +68,11 @@ public class SecurityConfig {
     @Bean
     @Order(3)
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        System.out.println("in jwt auth filter");
         return httpSecurity
                 .cors(cors->cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
-                .securityMatchers(match -> match.requestMatchers("/api/v1/**","/api/v1/books/**"))
+                .securityMatchers(match -> match.requestMatchers("/api/v1/**"))
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JwtAuthFilter(jwtService, refreshTokenRepository, accessTokenRepository),
@@ -82,7 +83,7 @@ public class SecurityConfig {
     @Bean
     @Order(2)
     SecurityFilterChain securityFilterChainRefreshFilter(HttpSecurity httpSecurity) throws Exception {
-        System.out.println("in jwt auth filter");
+        System.out.println("in refresh filter");
         return httpSecurity
                 .cors(cors->cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)

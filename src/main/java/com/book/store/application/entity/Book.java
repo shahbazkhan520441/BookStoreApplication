@@ -1,6 +1,7 @@
 package com.book.store.application.entity;
 
 import com.book.store.application.enums.AvailabilityStatus;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,6 +32,7 @@ public class Book {
     private AvailabilityStatus availabilityStatus;
 
     @OneToMany(mappedBy = "book")
+    @JsonManagedReference // Prevent recursion from the parent side
     private List<Image> images;
 
 }

@@ -34,13 +34,12 @@ public class OrderController {
     /**
      * Generates a new purchase order for a customer based on the provided book, customer, and address.
      *
-     * @param orderRequest the request containing order details such as quantity, payment details, etc.
-     * @param bookId       the ID of the book to be ordered.
+     * @param orderRequest the request containing order details such as quantity, payment details, etc
      * @param customerId   the ID of the customer placing the order.
      * @param addressId    the ID of the address where the book will be delivered.
      * @return a response containing the created purchase order details.
      */
-    @PostMapping("/customers/{customerId}/addresses/{addressId}/books/{bookId}/purchase-orders")
+    @PostMapping("/customers/{customerId}/addresses/{addressId}/purchase-orders")
     @Operation(summary = "Create Purchase Order", description = "Generates a new purchase order for the customer.",
             responses = {
                     @ApiResponse(responseCode = "201", description = "Order successfully created", content = {
@@ -55,10 +54,9 @@ public class OrderController {
             })
     public ResponseEntity<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(
             @RequestBody @Valid OrderRequest orderRequest,  // Added @Valid annotation here
-            @PathVariable @Valid Long bookId,               // Added @Valid annotation here
             @PathVariable @Valid Long customerId,           // Added @Valid annotation here
             @PathVariable @Valid Long addressId) {          // Added @Valid annotation here
-        return orderService.generatePurchaseOrder(orderRequest, bookId, customerId, addressId);
+        return orderService.generatePurchaseOrder(orderRequest, customerId, addressId);
     }
 
     //------------------------------------------------------------------------------------------------------------------------

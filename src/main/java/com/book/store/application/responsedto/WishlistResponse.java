@@ -12,6 +12,6 @@ import java.util.List;
 @Setter
 public class WishlistResponse {
     private Long wishlistId;
-    private List<Long> bookIds; // List of book IDs in the wishlist
+    private List<BookResponse> books; // List of book IDs in the wishlist
 }
 

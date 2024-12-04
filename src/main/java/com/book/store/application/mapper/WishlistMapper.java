@@ -25,12 +25,12 @@ public class WishlistMapper {
         WishlistResponse response = new WishlistResponse();
         response.setWishlistId(wishlist.getWishlistId());
 
-        // Collect remaining book IDs after removal
-        List<Long> remainingBookIds = wishlist.getBooks().stream()
-                .map(Book::getBookid) // Extract book IDs
-                .collect(Collectors.toList());
-
-        response.setBookIds(remainingBookIds);
+//        // Collect remaining book IDs after removal
+////        List<Long> remainingBookIds = wishlist.getBooks().stream()
+////                .map(Book::getBookid) // Extract book IDs
+////                .collect(Collectors.toList());
+//        System.out.println(wishlist.getBooks());
+//        response.setBook(wishlist.getBooks());
 
         return response;
     }

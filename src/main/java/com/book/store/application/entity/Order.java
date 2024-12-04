@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "`order`")
@@ -26,8 +27,8 @@ public class Order {
 
     @ManyToOne
     private Customer customer;
-    @ManyToOne
-    private Book book;
+    @ManyToMany
+    private List<Book> books;
     @ManyToOne
     private Address address;
 }

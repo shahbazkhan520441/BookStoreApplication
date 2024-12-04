@@ -30,7 +30,7 @@ public class AddressRequest {
     private String country;
 
     @NotNull(message = "Pincode cannot be null")
-    @Pattern(regexp = "\\d{5,6}", message = "Pincode must be 5 to 6 digits")
+//    @Pattern(regexp = "\\d{5,6}", message = "Pincode must be 5 to 6 digits")
     private int pincode;
 
     @NotNull(message = "Address type is required")

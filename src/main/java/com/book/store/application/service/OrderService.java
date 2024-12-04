@@ -8,10 +8,10 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface OrderService {
-    ResponseEntity<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(OrderRequest orderRequest, Long bookId, Long customerId, Long addressId);
 
     public ResponseEntity<ResponseStructure<List<OrderResponseDto>>> findPurchaseOrders(Long customerId);
 
 
     ResponseEntity<ResponseStructure<OrderResponseDto>> findPurchaseOrder(Long orderId);
+    ResponseEntity<ResponseStructure<OrderResponseDto>> generatePurchaseOrder(OrderRequest orderRequest, Long customerId, Long addressId);
 }

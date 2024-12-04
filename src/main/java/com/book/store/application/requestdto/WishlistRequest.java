@@ -8,8 +8,8 @@ import lombok.Setter;
 @Setter
 public class WishlistRequest {
 
-    @NotNull(message = "Wishlist ID cannot be null")
-    private Long wishlistId;
+//    @NotNull(message = "Wishlist ID cannot be null")
+//    private Long wishlistId;
 
     @NotNull(message = "Book ID cannot be null")
     private Long bookId;

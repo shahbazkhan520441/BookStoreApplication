@@ -24,7 +24,6 @@ import java.util.NoSuchElementException;
 @RequestMapping("/api/v1")
 @AllArgsConstructor
 @Tag(name = "Books Endpoints", description = "Contains all the endpoints related to book management in the bookstore application")
-//@CrossOrigin(origins = "*", allowCredentials = "true")
 public class BookController {
 
     private final BookService bookService;

@@ -40,7 +40,7 @@ public class BookMapper {
         List<Discount> discounts = discountRepository.findByBookAndIsActiveTrue(book);
         Double discount = discounts.isEmpty() ? 0.0 : discounts.getFirst().getDiscountValue();
         return BookResponse.builder()
-                .id(book.getBookid())
+                .bookid(book.getBookid())
                 .bookName(book.getBookName())
                 .bookAuthor(book.getBookAuthor())
                 .bookDescription(book.getBookDescription())

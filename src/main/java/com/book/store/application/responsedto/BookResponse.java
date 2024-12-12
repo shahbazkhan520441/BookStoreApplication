@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class BookResponse {
-    private Long id;
+    private Long bookid;
     private String bookName;
     private String bookAuthor;
     private String bookDescription;

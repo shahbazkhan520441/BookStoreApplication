@@ -9,6 +9,7 @@ import com.book.store.application.requestdto.OrderRequest;
 import com.book.store.application.requestdto.OrderRequestDto;
 import com.book.store.application.responsedto.OrderResponseDto;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -20,6 +21,9 @@ import java.util.Set;
 @Component
 @AllArgsConstructor
 public class OrderMapper {
+
+    @Autowired
+    public BookMapper bookMapper;
 
  private final AddressRepository addressRepository;
     // Mapping OrderRequest to Order entity
@@ -43,12 +47,12 @@ public class OrderMapper {
         OrderResponseDto responseDto = new OrderResponseDto();
         responseDto.setOrderId(order.getOrderId());
         responseDto.setCustomerId(order.getCustomer().getUserid()); // Assuming customer has a method getUserid()
-        responseDto.setBookIds(order.getBooks().stream().map(Book::getBookid).toList());
         responseDto.setTotalQuantity(order.getTotalQuantity());
         responseDto.setTotalPrice(order.getTotalPrice());
         responseDto.setDiscount(order.getDiscount());
         responseDto.setDiscountPrice(order.getDiscountPrice());
         responseDto.setTotalPayableAmount(order.getTotalPayableAmount());
+        responseDto.setBooks(order.getBooks().stream().map(bookMapper::mapBookToBookResponse).toList());
 
         // Map Address to AddressDto
         responseDto.setAddressDto(mapAddressToAddressDto(order.getAddress()));

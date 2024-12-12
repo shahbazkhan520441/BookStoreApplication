@@ -1,6 +1,7 @@
 package com.book.store.application.responsedto;
 
 
+import com.book.store.application.entity.Book;
 import com.book.store.application.requestdto.AddressDto;
 import lombok.*;
 
@@ -14,7 +15,7 @@ import java.util.List;
 public class OrderResponseDto {
     private Long orderId;
     private  Long customerId;
-    private List<Long> bookIds;
+    private List<BookResponse> books;
     private Integer totalQuantity;
     private Double totalPrice;
     private Double discount;

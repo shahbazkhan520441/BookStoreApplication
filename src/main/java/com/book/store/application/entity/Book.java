@@ -21,6 +21,7 @@ public class Book {
 
     private String bookName;
     private String bookAuthor;
+    @Column(length = 5000)
     private String bookDescription;
 
 

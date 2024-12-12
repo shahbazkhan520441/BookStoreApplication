@@ -238,6 +238,7 @@ public class UserController {
     @PostMapping("/refreshLogin")
     @Operation(summary = "Refresh login session", description = "Generates a new access token using the refresh token.")
     public ResponseEntity<ResponseStructure<AuthResponse>> refreshLogin(@CookieValue(value = "rt", required = false) String refreshToken) {
+        System.out.println("----------------------"+"in refresh login controller");
         return userService.refreshLogin(refreshToken);
     }
 

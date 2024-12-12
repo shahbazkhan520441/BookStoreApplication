@@ -39,7 +39,6 @@ public class BookServiceImpl implements BookService {
     private final CartRepository cartRepository;
 
 
-
     public BookServiceImpl(BookRepository bookRepository, BookMapper bookMapper, ImageService imageService, ImageRepository imageRepository, DiscountRepository discountRepository, CartRepository cartRepository) {
         this.bookRepository = bookRepository;
         this.bookMapper = bookMapper;

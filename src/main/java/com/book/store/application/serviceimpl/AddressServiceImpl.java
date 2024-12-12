@@ -17,6 +17,7 @@ import com.book.store.application.responsedto.AddressResponse;
 import com.book.store.application.service.AddressService;
 import com.book.store.application.util.ResponseStructure;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
